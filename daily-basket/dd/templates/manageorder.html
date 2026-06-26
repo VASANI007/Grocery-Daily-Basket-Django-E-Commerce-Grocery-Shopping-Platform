@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="en">
+	{% include 'master.html' %}
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #ffffff;
+        }
+        
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #c0c0c0;
+        }
+        
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #1e9e85;
+        }
+    </style>
+
+	<!-- banner -->
+	<div class="banner banner2">
+		<div class="container">
+			<h2>Manage Order</h2>
+		</div>
+	</div>
+	<!-- //banner -->
+	<!-- breadcrumbs -->
+	<div class="breadcrumb_dress">
+		<div class="container">
+			<ul>
+				<li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+					<i>/</i></li>
+				<li>Manage Order</li>
+			</ul>
+		</div>
+	</div>
+	<section class="w3l-contact py-5" id="contact">
+		<div class="container py-lg-5 py-4">
+			<div class="row contact-block">{% if data %}
+                <h3 class="mb-sm-4 mb-3">Manage Order</h3>
+				<table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Phone</th>
+                            <th>Address</th>
+                            <th>Paymode</th>
+                            <th>Timestamp</th>
+                            <th>Total Amount</th>
+                            <th>Status</th>
+                            <th>Days</th>
+                            <th>Razorpay Order Id</th>
+                            <th>Order Detailes</th>
+                            <th>Order Cancel</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>{{ i.phone }}</td>
+                            <td>{{ i.address }}</td>
+                            <td>{{ i.paymode }}</td>
+                            <td>{{ i.timestamp }}</td>
+                            <td>{{ i.finaltotal }}</td>
+                            <td>
+                                {% if i.status == True %}
+                                    <span style=" display: inline-block; padding: 8px 16px;font-size: 14px;font-weight: bold;color: white;border: none;border-radius: 20px;cursor: pointer;text-align: center;text-decoration: none; background-color: #28a745;">Confirmed</span>
+                                {% else %}
+                                    <span style=" display: inline-block; padding: 8px 16px;font-size: 14px;font-weight: bold;color: white;border: none;border-radius: 20px;cursor: pointer;text-align: center;text-decoration: none; background-color: #dc3545;">Cancelled</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ i.repeat_days }}</td>
+                            <td>{{ i.razorpay_order_id }}</td>
+                            <td>
+                                <a href="/yourorderdetailes/{{ i.id }}"  class="btn btn-sm btn-danger btn-action">View</a>
+                            </td>
+                            <td>
+                                {% if i.status == True %}
+                                <a href="/cancelorder/{{ i.id }}"  class="btn btn-sm btn-danger btn-action">cancel</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+                {% else %}
+                <center>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<img style="height: 300px; width: 400px;" src="/static/images/order.png" alt="User">
+                <h2><br />Your not any order place!</h2>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+	<!-- //contact -->
+
+<!---728x90--->
+{% include 'footer.html' %}
+</html>

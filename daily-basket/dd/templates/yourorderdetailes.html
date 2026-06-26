@@ -1,0 +1,220 @@
+<!doctype html>
+<html lang="en">
+	{% include 'master.html' %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #ffffff;
+        }
+        
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #c0c0c0;
+        }
+        
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #1e9e85;
+        }
+    </style>
+	<!-- banner -->
+	<div class="banner banner2">
+		<div class="container">
+			<h2>Order Detailes</h2>
+		</div>
+	</div>
+	<!-- //banner -->
+	<!-- breadcrumbs -->
+	<div class="breadcrumb_dress">
+		<div class="container">
+			<ul>
+				<li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+					<i>/</i></li>
+				<li>Order Detailes</li>
+			</ul>
+		</div>
+	</div>
+	<!-- contact -->
+	<section class="w3l-contact py-5" id="contact">
+		<div class="container py-lg-5 py-4">
+			<div class="row contact-block">
+                <h3 class="mb-sm-4 mb-3"><li><a href="/manageorder">My Order</a><i>></i>Order Detailes</h3></li>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Amount</th>
+                            <th>Review</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="/single/{{ i.p_id.id }}">
+                                    <img src="/media/{{ i.p_id.image }}" class="product-img" alt=" " style="height: 50px; width: 50px;">
+                                </a>
+                            </td>
+                            <td><a href="/single/{{ i.p_id.id }}">{{ i.p_id }}</a></td>
+                            <td>Rs. {{ i.p_id.price }}</td>
+                            <td>
+                                {{ i.quantity }}
+                            </td>
+                            <td>{{ i.totalamount }}</td>
+                            <td>
+                                {% if i.p_id.id in reviewed_product_ids %}
+                                <button type="button" class="btn btn-secondary" disabled>Reviewed</button>
+                                {% else %}
+                                <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal{{ i.p_id.id }}">Review</button>
+                                {% endif %}
+                            </td>
+                        </tr>
+
+                        {% if i.p_id.id not in reviewed_product_ids %}
+                        <!-- Review Modal -->
+                        <div class="modal fade" id="reviewModal{{ i.p_id.id }}" tabindex="-1" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <form action="/submit_review/{{ i.p_id.id }}/" method="POST" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <div class="modal-header">
+                                  <h5 class="modal-title">Review - {{ i.p_id.p_name }}</h5>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body text-start">
+                                    <div class="mb-3 text-center">
+                                        <img src="/media/{{ i.p_id.image }}" style="height: 100px; width: auto; border-radius: 5px;">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Upload Image</label>
+                                        <input type="file" class="form-control" name="review_image" accept="image/*">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Rating</label>
+                                        <div class="star-rating-input" data-rating="0">
+                                            <i class="fas fa-star" data-value="1"></i>
+                                            <i class="fas fa-star" data-value="2"></i>
+                                            <i class="fas fa-star" data-value="3"></i>
+                                            <i class="fas fa-star" data-value="4"></i>
+                                            <i class="fas fa-star" data-value="5"></i>
+                                            <input type="hidden" name="rating" value="0" required>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Your Review</label>
+                                        <textarea class="form-control" name="review_text" rows="3" required placeholder="Write your review here..."></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                  <button type="submit" class="btn btn-primary">Submit Review</button>
+                                </div>
+                              </form>
+                            </div>
+                          </div>
+                        </div>
+                        {% endif %}
+                        {% endfor %}
+                
+                        <!-- Price Details (Merged) --><thead>
+                        <tr>
+                            <th colspan="5"><h4>Price Details</h4></th>
+                            <th colspan="3"></th>
+                        </tr></thead>
+                        <tr>
+                            <td colspan="4">Price ({{ data|length }} items)</td>
+                            <td colspan="3" align="right">Rs. {{ amout }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">
+                                Delivery charges
+                            </td>
+                            <td colspan="3" align="right">
+                                {% if amout < 100 %}
+                                Rs. 29
+                                {% else %}
+                                Free Delivery
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="4"><b>Total Amount</b></td>
+                            <td colspan="3" align="right"><b>Rs. {{ totalamount }}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+    </div>
+</section>
+	<!-- //contact -->
+
+<!---728x90--->
+{% include 'footer.html' %}
+</html>
+
+<style>
+.star-rating-input i {
+    font-size: 24px;
+    color: #ccc;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.star-rating-input i.active {
+    color: #ff9900;
+}
+</style>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    const starContainers = document.querySelectorAll('.star-rating-input');
+    starContainers.forEach(container => {
+        const stars = container.querySelectorAll('i');
+        const input = container.querySelector('input');
+        const initialRating = parseInt(container.getAttribute('data-rating') || 0);
+
+        function updateStars(rating) {
+            stars.forEach(star => {
+                if (parseInt(star.getAttribute('data-value')) <= rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        if (initialRating > 0) updateStars(initialRating);
+
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const rating = parseInt(this.getAttribute('data-value'));
+                input.value = rating;
+                updateStars(rating);
+            });
+        });
+    });
+});
+</script>

@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+	{% include 'master.html' %}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th,
+        .styled-table td {
+            padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #ffffff;
+        }
+        
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #c0c0c0;
+        }
+        
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #1e9e85;
+        }
+         .form-check-input:checked {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+  }
+
+  .form-check-label {
+    font-weight: 500;
+    margin-left: 8px;
+  }
+    </style>
+	<!-- banner -->
+	<div class="banner banner2">
+		<div class="container">
+			<h2>Manage Product</h2>
+		</div>
+	</div>
+	<!-- //banner -->
+	<!-- breadcrumbs -->
+	<div class="breadcrumb_dress">
+		<div class="container">
+			<ul>
+				<li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+					<i>/</i></li>
+				<li>Manage Product</li>
+			</ul>
+		</div>
+	</div>
+	<!-- //breadcrumbs -->
+<div style="margin: 8px auto; display: block; text-align:center;">
+<!---728x90--->
+</div>
+	<!-- contact -->
+	<section class="w3l-contact py-5" id="contact">
+		<div class="container py-lg-5 py-4">
+			<div class="row contact-block">{% if data %}
+                <h3 class="mb-sm-4 mb-3">Manage Product</h3>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Quantity</th>
+                            <th>Total Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for i in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="/single/{{ i.p_id.id }}">
+                                    <img src="/media/{{ i.p_id.image }}" class="product-img" alt=" " style="height: 50px; width: 50px;">
+                                </a>
+                            </td>
+                            <td><a href="/single/{{ i.p_id.id }}">{{ i.p_id }}</a></td>
+                            <td>Rs. {{ i.p_id.price }}</td>
+                            <td>
+                                <a href="/descrease/{{ i.id }}" class="btn btn-sm btn-danger btn-action">-</a> 
+                                {{ i.quantity }} 
+                                <a href="/increase/{{ i.id }}" class="btn btn-sm btn-danger btn-action">+</a>
+                            </td>
+                            <td>{{ i.totalamount }}</td>
+                            <td>
+                                <a href="/deleteitem/{{ i.id }}" class="btn btn-sm btn-danger btn-action">Remove</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <thead>
+                        <tr>
+                            <th colspan="5"><h4>Price Details</h4></th>
+                            <th colspan="2"></th>
+                        </tr></thead>
+                
+                        <!-- Price Details (Merged) -->
+                        <tr>
+                            <td colspan="5">Price ({{ data|length }} items)</td>
+                            <td colspan="2" align="right">Rs. {{ amout }}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="5">
+                                Delivery charges
+                                <i class="fas fa-info-circle info-icon" id="infoIcon"></i>
+                                <!-- Popup Overlay -->
+                                <div id="popup-overlay" class="popup-overlay"></div>
+                                <!-- Popup Box -->
+                                <div id="popup" class="popup">
+                                    <button class="close-btn" onclick="closePopup()">X</button>
+                                    <h4>Delivery charges</h4>
+                                    <p>Free Delivery <span class="coupon-code">Upto Rs.100</span></p>
+                                </div>
+                            </td>
+                            <td colspan="2" align="right">
+                                {% if amout < 100 %}
+                                Rs. 29
+                                {% else %}
+                                Free Delivery
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="5"><b>Total Amount</b></td>
+                            <td colspan="2" align="right"><b>Rs. {{ total }}</b></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <form action="/placeorder" method="POST">
+                    {% csrf_token %}
+                            <div class="container mt-4">
+                              <label class="form-label fw-bold">Select Repeat Days for Subscription</label>
+                              <div class="row g-2">
+                                {% for day in days_of_week %}
+                                <div class="col-6 col-md-3">
+                                  <div class="form-check form-switch">
+                                    <input class="form-check-input" type="checkbox" name="repeat_days" value="{{ day }}" id="{{ day }}">
+                                    <label class="form-check-label" for="{{ day }}">{{ day }}</label>
+                                  </div>
+                                </div>
+                                {% endfor %}
+                              </div>
+                            </div>
+
+
+                            <div class="col-md-6 contact-left pe-lg-5">
+                                <h3 class="mb-sm-4 mb-3">Shipping Address</h3>
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="default-tab" data-bs-toggle="tab" data-bs-target="#default" type="button" role="tab" aria-controls="default" aria-selected="true">By Default</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link" id="new-tab" data-bs-toggle="tab" data-bs-target="#new" type="button" role="tab" aria-controls="new" aria-selected="false">New One</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane fade show active" id="default" role="tabpanel" aria-labelledby="default-tab">
+                                        <label for="phone" class="form-label">Phone Number:</label>
+                                        <input type="text" name="number" value="{{ request.session.log_phone}}" class="nav-link active" readonly>
+                                        <label for="address" class="form-label">Delivery Address:</label>
+                                        <textarea type="text" name="number" class="nav-link active" readonly>{{ request.session.log_address}}</textarea>
+                                    </div>
+                                    <div class="tab-pane fade" id="new" role="tabpanel" aria-labelledby="new-tab">
+                                        <input type="hidden" name="total" value="{{ total }}">
+                                        
+                                        <label for="phone" class="form-label">Phone Number:</label>
+                                        <input type="text" name="phone" placeholder="Phone No." class="form-control mb-3">
+                                        
+                                        <label for="address" class="form-label">Delivery Address:</label>
+                                        <textarea name="address" placeholder="Address" class="form-control mb-3"></textarea>
+                                    </div>
+                                </div>
+                                <label for="payment" class="form-label">Select Payment Method:</label>
+                                <select name="payment" required class="form-select mb-3">
+                                    <option value="Cash on Delivery">Cash on Delivery</option>
+                                    <option value="Online">Online Payment (Razorpay)</option>
+                                </select>
+                                <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
+                            </div>
+                        </div>
+                </form>
+            {% else %}
+            <center><img style="height: 300px; width: 400px;" src="/static/images/cart.png" alt="User">
+                <h2><br />&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Your cart is empty!</h2>
+            {% endif %}
+        </div>
+    </div>
+</section>
+	<!-- //contact -->
+<!---728x90--->
+{% include 'footer.html' %}
+<script>
+    // Open Popup
+    document.getElementById("infoIcon").addEventListener("click", function() {
+        document.getElementById("popup").style.display = "block";
+        document.getElementById("popup-overlay").style.display = "block";
+    });
+
+    // Close Popup
+    function closePopup() {
+        document.getElementById("popup").style.display = "none";
+        document.getElementById("popup-overlay").style.display = "none";
+    }
+</script>
+</html>

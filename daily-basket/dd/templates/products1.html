@@ -1,0 +1,161 @@
+<!doctype html>
+<html lang="en">
+	{% include 'master.html' %}
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			$("#sortOptions").change(function() {
+				var selectedSort = $(this).val();
+				var searchQuery = "{{ search_query }}";  // Retain search query in the URL
+				var newUrl = "/products1?sort=" + selectedSort + "&search=" + searchQuery;
+				window.location.href = newUrl;
+			});
+
+			// Ensure the correct option is selected on page reload
+			var urlParams = new URLSearchParams(window.location.search);
+			var selectedSort = urlParams.get("sort");
+			if (selectedSort) {
+				$("#sortOptions").val(selectedSort);
+			}
+		});
+	</script>
+
+	<!-- banner -->
+	<div class="banner banner2">
+		<div class="container">
+			<h2>Top Selling <span>Kitchen Products</span> Flat <i>25% Discount</i></h2>
+		</div>
+	</div>
+
+	<!-- breadcrumbs -->
+	<div class="breadcrumb_dress">
+		<div class="header-search position-absolute">
+			<form id="searchForm" class="d-flex" method="get">
+				{% csrf_token %}
+				<input type="search" placeholder="Search..." name="search" id="searchInput" value="{{ search_query }}" required class="form-control">
+				<button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+			</form>
+		</div>
+		
+		<div id="searchResults">
+			<!-- Results will be loaded here dynamically -->
+		</div>
+		<div class="container">
+			<ul>
+				<li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+					<i>/</i></li>
+				<li>Products</li>
+			</ul>
+		</div>
+	</div>
+
+	<!-- Products Section -->
+	<div class="mobiles py-5">
+		<div class="container py-lg-4 py-3">
+			<div class="row w3ls_mobiles_grids">
+				
+				<!-- Sidebar (Categories) -->
+				<div class="col-md-4 w3ls_mobiles_grid_left">
+					<div class="w3ls_mobiles_grid_left_grid">
+						<h3>Categories</h3>
+						<div class="w3ls_mobiles_grid_left_grid_sub">
+							<ul class="panel_bottom">
+								{% for i in data %}
+									<li><a href="/category/{{ i.id }}" class="dropdown-item">{{ i.cat_name }}</a></li>
+								{% endfor %}
+							</ul>
+						</div>
+					</div>
+				</div>
+
+				<!-- Products Listing -->
+				<div class="col-md-8 w3ls_mobiles_grid_right">
+					
+					<!-- Sorting & Product Count -->
+					<div class="w3ls_mobiles_grid_right_grid2">
+						<div class="w3ls_mobiles_grid_right_grid2_left">
+							<h3>Showing Results: {{ products|length }}</h3>
+						</div>
+						<div class="w3ls_mobiles_grid_right_grid2_right">
+							<select id="sortOptions" name="sort_item" class="select_item">
+								<option value="default" {% if selected_sort == "default" %}selected{% endif %}>Default sorting</option>
+								<option value="low_to_high" {% if selected_sort == "low_to_high" %}selected{% endif %}>Sort by price: low to high</option>
+								<option value="high_to_low" {% if selected_sort == "high_to_low" %}selected{% endif %}>Sort by price: high to low</option>
+							</select>
+						</div>
+						<div class="clearfix"> </div>
+					</div>
+
+					<!-- Product Grid -->
+					<div class="row w3ls_mobiles_grid_right_grid3">
+						{% for i in products %}
+						<div class="col-md-4 agileinfo_new_products_grid agileinfo_new_products_grid_mobiles">
+							<div class="agile_ecommerce_tab_left mobiles_grid">
+								
+								<!-- Product Image -->
+								{% if i.in_stock == "No" %}
+								<a href="/single/{{ i.id }}"><img src="/media/{{ i.image }}" class="card-img-top" style="height: 300px;" alt=" "></a>
+									<div style="position: absolute; top: 35%; left: 50%; transform: translate(-50%, -50%); background-color: #000000; height: 30px; width:100%; color: #ffff;">Product Unavailable</div>
+								{% else %}
+									<a href="/single/{{ i.id }}"><img src="/media/{{ i.image }}" class="card-img-top" style="height: 300px;" alt=" "></a>
+								{% endif %}
+
+								<!-- Product Details -->
+								<h5><a href="/single/{{ i.id }}">{{ i.p_name }}</a></h5>
+								<div class="simpleCart_shelfItem">
+									<p><i class="item_price">Rs. {{ i.price }}</i></p>
+
+									<!-- Add to Cart Button (Only if Available) -->
+									{% if request.session.log_role == "Customer" and i.in_stock == "Yes" %}
+										<form method="post" action="/insertiontocart">
+											{% csrf_token %}
+											<input type="hidden" name="quantity" id="quantity" min="1" value="1">
+											<input type="hidden" name="pid" value="{{ i.id }}" />
+											<input type="hidden" name="price" value="{{ i.price }}" />
+											<button type="submit" class="w3ls-cart" value="Add to Cart">Add to cart</button>
+										</form>
+									{% endif %}
+								</div>
+							</div><br>
+						</div>
+						{% endfor %}
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modals for Each Product -->
+	{% for i in products %}
+	<div class="modal fade" id="myModal{{ i.id }}" tabindex="-1" aria-labelledby="myModal{{ i.id }}" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content">
+				<div class="modal-header border-0">
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="row modal-body">
+					<div class="col-md-5 modal_body_left">
+						<a href="/single/{{ i.id }}"><img src="/media/{{ i.image }}" class="card-img-top" alt="Product"></a>
+					</div>
+					<div class="col-md-7 modal_body_right">
+						<h4>{{ i.p_name }}</h4>
+						<p>{{ i.description }}</p>
+						<div class="modal_body_right_cart simpleCart_shelfItem">
+							<i class="item_price">Rs. {{ i.price }}</i>
+							{% if request.session.log_role == "Customer" and i.in_stock == "Yes" %}
+							<form method="post">
+								{% csrf_token %}
+								<input type="hidden" name="pid" value="{{ i.id }}" />
+								<button type="submit" class="w3ls-cart" value="Add to Cart">Add to cart</button>
+							</form>
+							{% endif %}
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	{% endfor %}
+
+	{% include 'footer.html' %}
+</html>

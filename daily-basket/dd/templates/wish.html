@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wishlist</title>
+
+    <!-- Include Master Template -->
+    {% include 'master.html' %}
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+
+    <style>
+        .styled-table {
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 0.9em;
+            font-family: sans-serif;
+            min-width: 400px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.15);
+        }
+        .styled-table thead tr {
+            background-color: #009879;
+            color: #ffffff;
+            text-align: left;
+        }
+        .styled-table th, .styled-table td {
+            padding: 12px 15px;
+        }
+        .styled-table tbody tr {
+            border-bottom: 1px solid #ffffff;
+        }
+        .styled-table tbody tr:nth-of-type(even) {
+            background-color: #c0c0c0;
+        }
+        .styled-table tbody tr:last-of-type {
+            border-bottom: 2px solid #009879;
+        }
+        .styled-table tbody tr.active-row {
+            font-weight: bold;
+            color: #1e9e85;
+        }
+    </style>
+</head>
+<body>
+    <!-- Banner -->
+    <div class="banner banner2">
+        <div class="container">
+            <h2>Manage Product</h2>
+        </div>
+    </div>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb_dress">
+        <div class="container">
+            <ul>
+                <li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a> <i>/</i></li>
+                <li>Wishlist</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Wishlist Section -->
+    <section class="w3l-contact py-5" id="contact">
+        <div class="container py-lg-5 py-4">
+            <div class="row contact-block">
+                {% if data %}
+                <h3 class="mb-sm-4 mb-3">Wishlist</h3>
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>No.</th>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Price</th>
+                            <th>Add to cart</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for item in data %}
+                        <tr>
+                            <td>{{ forloop.counter }}</td>
+                            <td>
+                                <a href="/single/{{ item.p_id.id }}">
+                                    <img src="/media/{{ item.p_id.image }}" class="product-img" alt=" " style="height: 50px; width: 50px;">
+                                </a>
+                            </td>
+                            <td><a href="/single/{{ item.p_id.id }}">{{ item.p_id.p_name }}</a></td>
+                            <td>Rs. {{ item.p_id.price }}</td>
+                            <td>
+                                {% if request.session.log_role == "Customer" and item.p_id.in_stock == "Yes" %}
+                                    <form method="post" action="/insertiontocart">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="quantity" value="1">
+                                        <input type="hidden" name="pid" value="{{ item.p_id.id }}">
+                                        <input type="hidden" name="price" value="{{ item.p_id.price }}">
+                                        <button type="submit" class="btn btn-sm btn-danger btn-action">Add to cart</button>
+                                    </form>
+                                {% else %}
+                                    <span class="text-muted"><h6><b>Out of Stock</b></h6></span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="/deletewish/{{ item.id }}" class="btn btn-sm btn-danger btn-action">Remove</a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        <tr>
+                            <td colspan="5"><h5><b>Total Items</b></h5></td>
+                            <td colspan="2"><h5><b>{{ data|length }} items</b></h5></td>
+                        </tr>
+                    </tbody>
+                </table>
+                {% else %}
+                <center>
+                    <img style="height: 300px; width: 400px;" src="/static/images/cart.png" alt="User">
+                    <h2>Your Wishlist is empty!</h2>
+                </center>
+                {% endif %}
+                
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include 'footer.html' %}
+
+</body>
+</html>

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+	{% include 'master.html' %}
+	<!-- banner -->
+	<div class="banner banner2">
+		<div class="container">
+			<h2>Add Product</h2>
+		</div>
+	</div>
+	<!-- //banner -->
+	<!-- breadcrumbs -->
+	<div class="breadcrumb_dress">
+		<div class="container">
+			<ul>
+				<li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+					<i>/</i></li>
+				<li>Add Product</li>
+			</ul>
+		</div>
+	</div>
+	<!-- //breadcrumbs -->
+<div style="margin: 8px auto; display: block; text-align:center;">
+
+<!---728x90--->
+
+ 
+</div>
+	<!-- contact -->
+	<form method="post" action="/fetchproducts" enctype="multipart/form-data">
+    {% csrf_token %}
+	<section class="w3l-contact py-5" id="contact">
+		<div class="container py-lg-5 py-4">
+			<div class="row contact-block">
+                <h3 class="mb-sm-4 mb-3">Add Product</h3>
+				<div class="col-md-6 contact-left pe-lg-5">
+					<input type="text" name="pname" id="pname" placeholder="Product Name*" class="form-control" required="" />
+                    <select class="form-select" name="pcat" id="productCategory" required>
+                        <option value="">---Select Category---</option>
+                            {% for i in catdata %}
+                                <option value="{{ i.id }}">{{ i.cat_name }}</option>
+                            {% endfor %}
+                    </select><br />
+                    <input type="file" class="form-control" name="productImage" id="productImage" accept="image/*" required>
+					<input type="file" class="form-control" name="backImage" id="backImage" accept="image/*" required>
+                    <input type="number" class="form-control" name="productPrice" id="productPrice" placeholder="Product Price*" min="0" step="0.01" required>
+					<select class="form-select" name="productStatus" id="productStatus" required>
+						<option value="">---Select Status---</option>
+						<option value="Yes">Available</option>
+						<option value="No">Unavailable</option>
+					</select>
+					<br />
+                    <div class="form-input">
+                        <textarea name="productDescription" class="form-control mb-3" id="productDescription" placeholder="Product Description*"
+                            required=""></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-style">Add New Product</button>
+				</div>
+				<div class="col-md-6 contact-right mt-md-0 mt-5 ps-lg-0">
+					<form action="https://sendmail.w3layouts.com/submitForm" method="post" class="signin-form">
+						<center><img style="height: 500px; width: 500px; border-radius: 00%; border: 0px solid #ffffff" src="static/images/1.png" alt="User">
+					</form>
+				</div>
+			</div>
+		</div>
+	</section>
+</form>
+	<!-- //contact -->
+
+{% include 'footer.html' %}
+</html>

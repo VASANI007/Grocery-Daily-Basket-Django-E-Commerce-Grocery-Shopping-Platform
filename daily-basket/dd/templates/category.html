@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+    {% include 'master.html' %}  <!-- banner -->
+    <div class="banner banner2">
+        <div class="container">
+            <h2>Top Selling <span>Kitchen Products</span> Flat <i>25% Discount</i></h2>
+        </div>
+    </div>
+
+    <!-- breadcrumbs -->
+    <div class="breadcrumb_dress">
+        <div class="header-search position-absolute">
+            <form id="searchForm" class="d-flex">
+                {% csrf_token %}
+                <input type="search" placeholder="Search..." name="search" id="searchInput" required class="form-control">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+            </form>
+        </div>
+        
+        <div id="searchResults"></div>
+        <div class="container">
+            <ul>
+                <li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+                    <i>/</i></li>
+                <li>Categories</li>
+            </ul>
+        </div>
+    </div>
+    <!-- //breadcrumbs -->
+
+    <!-- Category Products -->
+    <div class="mobiles py-5">
+        <div class="container py-lg-4 py-3">
+            <div class="row w3ls_mobiles_grids">
+                <!-- Sidebar (Categories) -->
+                <div class="col-md-4 w3ls_mobiles_grid_left">
+                    <div class="w3ls_mobiles_grid_left_grid">
+                        <h3>Categories</h3>
+                        <div class="w3ls_mobiles_grid_left_grid_sub">
+                            <ul class="panel_bottom">
+                                {% for i in category %}
+                                    <li><a href="/category/{{ i.id }}" class="dropdown-item">{{ i.cat_name }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Product Listings -->
+                <div class="col-md-8 w3ls_mobiles_grid_right">
+                    <div class="w3ls_mobiles_grid_right_grid2">
+                        <div class="w3ls_mobiles_grid_right_grid2_left">
+                            <h3>Showing Results: {{ data|length }}</h3>
+                        </div>
+                        <div class="w3ls_mobiles_grid_right_grid2_right">
+                            <select id="sortOptions" name="sort_item" class="select_item">
+                                <option value="default" {% if selected_sort == "default" %}selected{% endif %}>Default sorting</option>
+                                <option value="low_to_high" {% if selected_sort == "low_to_high" %}selected{% endif %}>Sort by price: low to high</option>
+                                <option value="high_to_low" {% if selected_sort == "high_to_low" %}selected{% endif %}>Sort by price: high to low</option>
+                            </select>
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
+
+                    <!-- Product Grid -->
+                    <div class="row w3ls_mobiles_grid_right_grid3">
+                        {% for i in data %}
+                        <div class="col-md-4 agileinfo_new_products_grid agileinfo_new_products_grid_mobiles">
+                            <div class="agile_ecommerce_tab_left mobiles_grid">
+                                <a href="/single/{{ i.id }}"><img src="/media/{{ i.image }}" class="card-img-top" style="height: 300px;" alt=" "></a>
+                                <h5><a href="/single/{{ i.id }}">{{ i.p_name }}</a></h5>
+                                <div class="simpleCart_shelfItem">
+                                    <p><i class="item_price">Rs. {{ i.price }}</i></p>
+                                    {% if request.session.log_role == "Customer" %}
+                                        <form method="post" action="/insertiontocart">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="quantity" id="quantity" min="1" value="1">
+                                            <input type="hidden" name="pid" value="{{ i.id }}" />
+                                            <input type="hidden" name="price" value="{{ i.price }}" />
+                                            <button type="submit" class="w3ls-cart" value="Add to Cart">Add to cart</button>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div><br>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("#sortOptions").change(function() {
+                var selectedSort = $(this).val();
+                var categoryId = "{{ category_id }}";  // Get category ID from Django context
+                var newUrl = "/category/" + categoryId + "?sort=" + selectedSort;
+                window.location.href = newUrl;
+            });
+
+            // Ensure the correct option is selected on page reload
+            var urlParams = new URLSearchParams(window.location.search);
+            var selectedSort = urlParams.get("sort");
+            if (selectedSort) {
+                $("#sortOptions").val(selectedSort);
+            }
+        });
+    </script>
+
+    {% include 'footer.html' %}
+</html>

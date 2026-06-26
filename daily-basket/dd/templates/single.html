@@ -1,0 +1,463 @@
+<!doctype html>
+<html lang="en">
+	{% include 'master.html' %}
+<style type="text/css">
+.seller-card {
+    border-left: 4px solid #54C392 !important;
+}
+[data-theme="dark"] .seller-card {
+    border-left: 4px solid #009879 !important;
+}
+	
+.slider{
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+figure{
+    position: relative;
+    left: 0;
+    width: 400%; /* width dikali slide */
+    animation: 10s slide infinite;
+}
+
+.slide{
+    position: relative;
+    width: 25%; /* width dibagi slide */
+    float: left;
+}
+
+.slide img{
+    width: 100%;
+    height: 500px;
+}
+
+@keyframes slide{
+    0%{
+        left:0;
+    }
+    10%{
+        left:0;
+    }
+    20%{
+        left:-100%;
+    }
+    30%{
+        left:-100%;
+    }
+    
+}
+</style>
+	<!-- banner -->
+	<div class="banner banner2">
+		<div class="container">
+			<h2>Single Page</h2>
+		</div>
+	</div>
+	<!-- //banner -->
+	<!-- breadcrumbs -->
+	<div class="breadcrumb_dress">
+		<div class="container">
+			<ul>
+				<li><a href="/"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Home</a>
+					<i>/</i></li>
+				<li>Single Page</li>
+			</ul>
+		</div>
+	</div>
+	<!-- //breadcrumbs -->
+<div style="margin: 8px auto; display: block; text-align:right;">
+
+</div>
+	<!-- single -->
+	<div class="single py-5">
+		<div class="container py-lg-5 py-4">
+			<div class="row align-items-center">
+				<div class="col-lg-4 col-md-8 single-right-left ">
+					<div class="product-image-gallery" style="position: relative;">
+						<div style="position: absolute; top: 20px; right: 20px; z-index: 1050;">
+							<form method="post" action="/showwish">
+								{% csrf_token %}
+								{% if request.session.log_role == "Customer" %}
+								<input type="hidden" name="pid" value="{{ data.id }}" />
+								<button class="w3view-cart" type="submit" name="submit" value="" style="background: #fff0f5; border: none; border-radius: 50%; width: 45px; height: 45px; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+								<i class="fa-duotone fa-regular fa-heart" style="font-size: 22px; color: #ff0055; margin: 0;"></i></button>
+								{% endif %}
+							</form>
+						</div>
+						<div class="main-image" style="text-align: center; border: 1px solid #eee; padding: 10px; position: relative;">
+							<img id="mainImage" src="/media/{{ data.image }}" data-zoom-image="/media/{{ data.image }}" class="img-fluid" alt=" " style="width: 100%; height: 400px; object-fit: contain; cursor: pointer;">
+						</div>
+						<div class="thumbnails" style="display: flex; gap: 15px; margin-top: 15px; justify-content: center;">
+							<img src="/media/{{ data.image }}" class="img-thumbnail" alt=" " style="width: 80px; height: 80px; object-fit: contain; cursor: pointer; border: 2px solid #ff9900;" onclick="changeImage('/media/{{ data.image }}', this)">
+							{% if data.p_image %}
+							<img src="/media/{{ data.p_image }}" class="img-thumbnail" alt=" " style="width: 80px; height: 80px; object-fit: contain; cursor: pointer; border: 1px solid #ccc;" onclick="changeImage('/media/{{ data.p_image }}', this)">
+							{% endif %}
+						</div>
+					</div>
+
+					<!-- Big Screen Modal -->
+					<div class="modal fade" id="imageModal" tabindex="-1" aria-hidden="true">
+						<div class="modal-dialog modal-xl modal-dialog-centered">
+							<div class="modal-content" style="background: transparent; border: none;">
+								<div class="modal-header border-0" style="padding: 0; z-index: 10;">
+									<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="background-color: white; opacity: 1; margin: 10px; padding: 10px;"></button>
+								</div>
+								<div class="modal-body text-center" style="padding: 0;">
+									<img id="modalImage" src="/media/{{ data.image }}" class="img-fluid" alt=" " style="max-height: 90vh; width: auto; object-fit: contain; background: white; border-radius: 8px;">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8 single-right">
+					<h2>{{ data.p_name }}</h2>
+					<div class="rating1"><br>
+						<span style="color: #ff9900; font-size: 20px;">
+							{{ avg_rating }}
+							{% for i in "12345" %}
+								{% if forloop.counter <= avg_rating|add:"0" %}
+								<i class="fas fa-star"></i>
+								{% else %}
+								<i class="far fa-star"></i>
+								{% endif %}
+							{% endfor %}
+						</span>
+						<span class="description" style="margin-left: 10px;">({{ total_reviews }} reviews)</span>
+					</div>
+					<div class="description">
+						<h4><i>Description:</i></h4>
+						<p>{{ data.description }}</p>
+					</div>
+					
+					<!-- Why Choose Daily Basket Section -->
+					<div class="why-choose-us mt-4 mb-4">
+						<h5 class="mb-3" style="font-weight: bold; color: var(--text-color);">
+							Why choose Daily Basket?
+						</h5>
+
+						<div class="d-flex justify-content-between flex-wrap text-center gap-2" style="gap: 10px;">
+
+							<div class="feature-card border rounded p-3"
+							style="flex: 1; min-width: 110px; background-color: var(--card-bg); color: var(--text-color);">
+
+							<div class="icon-circle mx-auto mb-2"
+								style="width: 40px; height: 40px; border-radius: 50%; background: var(--box-bg); display: flex; align-items: center; justify-content: center;">
+
+								<i class="fas fa-shopping-basket"
+									style="color: var(--icon-color); font-size: 18px;"></i>
+							</div>
+
+							<h6 style="font-size: 12px; font-weight: bold; margin-bottom: 3px; color: var(--text-color);">
+								Quality products
+							</h6>
+
+							<div style="font-size: 10px; color: var(--muted-text);">
+								You can trust
+							</div>
+						</div>
+
+						<div class="feature-card border rounded p-3"
+							style="flex: 1; min-width: 110px; background-color: var(--card-bg); color: var(--text-color);">
+
+							<div class="icon-circle mx-auto mb-2"
+								style="width: 40px; height: 40px; border-radius: 50%; background: var(--box-bg); display: flex; align-items: center; justify-content: center;">
+
+								<i class="fas fa-bolt"
+									style="color: var(--icon-color); font-size: 18px;"></i>
+							</div>
+
+							<h6 style="font-size: 12px; font-weight: bold; margin-bottom: 3px; color: var(--text-color);">
+								10 min delivery*
+							</h6>
+
+							<div style="font-size: 10px; color: var(--muted-text);">
+								On selected locations
+							</div>
+						</div>
+
+						<div class="feature-card border rounded p-3"
+							style="flex: 1; min-width: 110px; background-color: var(--card-bg); color: var(--text-color);">
+
+							<div class="icon-circle mx-auto mb-2"
+								style="width: 40px; height: 40px; border-radius: 50%; background: var(--box-bg); display: flex; align-items: center; justify-content: center;">
+
+								<i class="fas fa-stopwatch"
+									style="color: var(--icon-color); font-size: 18px;"></i>
+							</div>
+
+							<h6 style="font-size: 12px; font-weight: bold; margin-bottom: 3px; color: var(--text-color);">
+								On time
+							</h6>
+
+							<div style="font-size: 10px; color: var(--muted-text);">
+								Guarantee
+							</div>
+						</div>
+
+						<div class="feature-card border rounded p-3"
+							style="flex: 1; min-width: 110px; background-color: var(--card-bg); color: var(--text-color);">
+
+							<div class="icon-circle mx-auto mb-2"
+								style="width: 40px; height: 40px; border-radius: 50%; background: var(--box-bg); display: flex; align-items: center; justify-content: center;">
+
+								<i class="fas fa-motorcycle"
+									style="color: var(--icon-color); font-size: 18px;"></i>
+							</div>
+
+							<h6 style="font-size: 12px; font-weight: bold; margin-bottom: 3px; color: var(--text-color);">
+								Free delivery*
+							</h6>
+
+							<div style="font-size: 10px; color: var(--muted-text);">
+								No extra cost
+							</div>
+						</div>
+
+						<div class="feature-card border rounded p-3"
+							style="flex: 1; min-width: 110px; background-color: var(--card-bg); color: var(--text-color);">
+
+							<div class="icon-circle mx-auto mb-2"
+								style="width: 40px; height: 40px; border-radius: 50%; background: var(--box-bg); display: flex; align-items: center; justify-content: center;">
+
+								<i class="fas fa-undo-alt"
+									style="color: var(--icon-color); font-size: 18px;"></i>
+							</div>
+
+							<h6 style="font-size: 12px; font-weight: bold; margin-bottom: 3px; color: var(--text-color);">
+								Return Policy
+							</h6>
+
+							<div style="font-size: 10px; color: var(--muted-text);">
+								No Question asked
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Seller Details Card -->
+				<div class="card mt-4 mb-3 border-0 shadow-sm seller-card" style="background-color: var(--card-bg); border-radius: 8px;">
+					<div class="card-body p-3">
+						<h6 class="card-title" style="color: #00c896; font-weight: bold; margin-bottom: 12px; font-size: 15px;">
+							<i class="fas fa-store-alt" style="margin-right: 5px;"></i>
+							Sold By
+						</h6>
+
+						<div style="font-size: 14px; color: var(--text-color);">
+
+							<div style="margin-bottom: 6px;">
+								<i class="fas fa-user-circle" style="width: 20px;"></i>
+
+								<strong>Name:</strong>
+
+								<span style="margin-left: 5px;">
+									{{ data.sellerid.u_name|title }}
+								</span>
+							</div>
+
+							<div style="margin-bottom: 6px;">
+								<i class="fas fa-phone-alt" style="width: 20px;"></i>
+
+								<strong>Phone:</strong>
+
+								<span style="margin-left: 5px;">
+									<a href="tel:{{ data.sellerid.u_phone }}"
+										style="color: var(--text-color); text-decoration: none;">
+
+										{{ data.sellerid.u_phone }}
+									</a>
+								</span>
+							</div>
+
+							<div>
+								<i class="fas fa-envelope" style="width: 20px;"></i>
+
+								<strong>Email:</strong>
+
+								<span style="margin-left: 5px;">
+									<a href="mailto:{{ data.sellerid.u_email }}"
+										style="color: var(--text-color); text-decoration: none;">
+
+										{{ data.sellerid.u_email }}
+									</a>
+								</span>
+							</div>
+
+						</div>
+					</div>
+				</div>
+
+					<div class="simpleCart_shelfItem"><br>
+						{% if data.in_stock == "No" %}
+							<h5>Out Of Stock<h5>
+						{% else %}
+							<i class="item_price"><h5>Rs. {{ data.price }}</h5></i></p>
+						{% endif %}
+						{% if request.session.log_role == "Customer" and data.in_stock == "Yes" %}
+						<form method="post" action="/insertiontocart">
+							{% csrf_token %}
+							<div class="color-quality">
+								<div class="color-quality-right" style="display: flex; align-items: center; gap: 15px;">
+									<h4 style="margin: 0;">Quantity :</h4>
+									<div class="quantity">
+										<div class="quantity-select">
+											<input class="form-control" style="width: 150px;" type="number" name="quantity" id="quantity" min="1" max="10" value="1">
+										</div>
+									</div>
+								</div>
+								<div class="clearfix"> </div>
+							</div><br>
+							<input type="hidden" name="pid" value="{{ data.id }}" />
+							<input type="hidden" name="price" value="{{ data.price }}" />
+							<button type="submit" class="btn btn-style" value="Add to Cart">Add to cart</button>
+						</form>
+						{% elif request.session.log_role != "Customer" %}
+						<div class="alert mt-4" style="border-left: 5px solid #ff9800; background-color: #fff8e1; color: #d84315; font-size: 16px; padding: 15px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+							<strong><i class="fas fa-exclamation-triangle" style="margin-right: 8px;"></i> Attention:</strong> Please log in as a Customer to purchase this product.
+						</div>
+						{% endif %}
+					</div>
+					
+					
+					
+				</div>
+
+			</div>
+
+			<!-- Customer Reviews Section -->
+			<div class="row mt-5" style="border-top: 1px solid #eee; padding-top: 30px;">
+				<div class="col-md-4">
+					<h4>Customer Reviews</h4>
+					<div class="mb-3 mt-3">
+						<span style="font-size: 35px; font-weight: bold; color: #333;">{{ avg_rating }}</span> out of 5
+					</div>
+					<div class="rating-breakdown" style="padding-right: 20px;">
+						<div class="d-flex align-items-center mb-2">
+							<small style="min-width: 50px;">5 Star</small> 
+							<div class="progress w-100 mx-2" style="height: 10px;"><div class="progress-bar bg-warning" style="width: {% if total_reviews > 0 %} {% widthratio star5 total_reviews 100 %} {% else %} 0 {% endif %}%"></div></div>
+							<small class="text-muted">{{ star5 }}</small>
+						</div>
+						<div class="d-flex align-items-center mb-2">
+							<small style="min-width: 50px;">4 Star</small> 
+							<div class="progress w-100 mx-2" style="height: 10px;"><div class="progress-bar bg-warning" style="width: {% if total_reviews > 0 %} {% widthratio star4 total_reviews 100 %} {% else %} 0 {% endif %}%"></div></div>
+							<small class="text-muted">{{ star4 }}</small>
+						</div>
+						<div class="d-flex align-items-center mb-2">
+							<small style="min-width: 50px;">3 Star</small> 
+							<div class="progress w-100 mx-2" style="height: 10px;"><div class="progress-bar bg-warning" style="width: {% if total_reviews > 0 %} {% widthratio star3 total_reviews 100 %} {% else %} 0 {% endif %}%"></div></div>
+							<small class="text-muted">{{ star3 }}</small>
+						</div>
+						<div class="d-flex align-items-center mb-2">
+							<small style="min-width: 50px;">2 Star</small> 
+							<div class="progress w-100 mx-2" style="height: 10px;"><div class="progress-bar bg-warning" style="width: {% if total_reviews > 0 %} {% widthratio star2 total_reviews 100 %} {% else %} 0 {% endif %}%"></div></div>
+							<small class="text-muted">{{ star2 }}</small>
+						</div>
+						<div class="d-flex align-items-center mb-2">
+							<small style="min-width: 50px;">1 Star</small> 
+							<div class="progress w-100 mx-2" style="height: 10px;"><div class="progress-bar bg-warning" style="width: {% if total_reviews > 0 %} {% widthratio star1 total_reviews 100 %} {% else %} 0 {% endif %}%"></div></div>
+							<small class="text-muted">{{ star1 }}</small>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-8">
+					{% if reviews %}
+						{% for r in reviews %}
+						<div class="card mb-4 border-0" style="border-bottom: 1px solid #f1f1f1 !important; padding-bottom: 15px;">
+							<div class="card-body p-0">
+								<h5 class="mb-1 d-flex align-items-center">
+									{% if r.u_id.u_image %}
+										<img src="/media/{{ r.u_id.u_image }}" style="width: 35px; height: 35px; border-radius: 50%; object-fit: cover; margin-right: 10px;" alt="{{ r.u_id.u_name }}">
+									{% else %}
+										<i class="fas fa-user-circle" style="font-size: 24px; color: #ccc; margin-right: 10px;"></i>
+									{% endif %}
+									{{ r.u_id.u_name }}
+								</h5>
+								<div style="color: #ff9900; font-size: 14px;" class="mb-2 mt-2">
+									{% for i in "12345" %}
+										{% if forloop.counter <= r.ratting %}
+										<i class="fas fa-star"></i>
+										{% else %}
+										<i class="far fa-star"></i>
+										{% endif %}
+									{% endfor %}
+									<small class="text-muted" style="margin-left: 10px;">{{ r.review_date }}</small>
+								</div>
+								<p style="font-size: 15px; color: #444;">{{ r.review }}</p>
+								{% if r.image %}
+									<img src="/media/{{ r.image }}" class="img-thumbnail" style="max-height: 120px; border-radius: 5px; cursor: pointer;" data-bs-toggle="modal" data-bs-target="#reviewImageModal{{ r.id }}">
+									
+									<!-- Review Image Modal -->
+									<div class="modal fade" id="reviewImageModal{{ r.id }}" tabindex="-1" aria-hidden="true">
+										<div class="modal-dialog modal-dialog-centered modal-lg">
+											<div class="modal-content bg-transparent border-0">
+												<div class="modal-header border-0 pb-0 justify-content-end">
+													<button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close" style="background-color: white; border-radius: 50%; opacity: 1; padding: 10px;"></button>
+												</div>
+												<div class="modal-body text-center pt-0">
+													<img src="/media/{{ r.image }}" class="img-fluid rounded" style="max-height: 85vh; max-width: 100%;">
+												</div>
+											</div>
+										</div>
+									</div>
+								{% endif %}
+							</div>
+						</div>
+						{% endfor %}
+					{% else %}
+						<div class="text-center mt-4">
+							<p style="font-size: 16px; color: #666;">No reviews yet. Be the first to review this product after purchasing!</p>
+						</div>
+					{% endif %}
+				</div>
+			</div>
+			<!-- //Customer Reviews Section -->
+
+		</div>
+	</div>
+	<!-- //single -->
+
+	<!-- newsletter -->
+	{% include 'footer.html' %}
+	
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/elevatezoom/3.0.8/jquery.elevatezoom.min.js"></script>
+	<script>
+		function initZoom() {
+			$('.zoomContainer').remove();
+			$('#mainImage').removeData('elevateZoom');
+			$('#mainImage').elevateZoom({
+				zoomType: "window",
+				cursor: "pointer",
+				zoomWindowFadeIn: 500,
+				zoomWindowFadeOut: 500,
+				lensFadeIn: 500,
+				lensFadeOut: 500,
+				scrollZoom: true,
+				zoomWindowWidth: 500,
+				zoomWindowHeight: 500
+			});
+		}
+
+		$(document).ready(function() {
+			// Small timeout to ensure image is fully loaded before calculating zoom dimensions
+			setTimeout(initZoom, 300);
+
+			// Open modal when zoom container or image is clicked
+			$(document).on('click', '.zoomContainer, #mainImage', function() {
+				$('#imageModal').modal('show');
+			});
+		});
+
+		function changeImage(src, element) {
+			$('#mainImage').attr('src', src);
+			$('#mainImage').data('zoom-image', src);
+			$('#modalImage').attr('src', src);
+			
+			// Update active thumbnail borders
+			$('.thumbnails img').css('border', '1px solid #ccc');
+			$(element).css('border', '2px solid #ff9900');
+			
+			// Reinitialize zoom
+			initZoom();
+		}
+	</script>
+</html>
