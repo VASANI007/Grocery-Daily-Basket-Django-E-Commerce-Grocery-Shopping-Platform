@@ -135,8 +135,8 @@ MEDIA_URL = '/media/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'dailybasket802@gmail.com'
-EMAIL_HOST_PASSWORD = 'prvkokaatvfwfenq'
+EMAIL_HOST_USER = 'enter a mail id'
+EMAIL_HOST_PASSWORD = 'Enter a 16 code password'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
